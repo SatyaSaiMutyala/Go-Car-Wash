@@ -335,6 +335,22 @@ mixin _$AppStore on _AppStore, Store {
     });
   }
 
+  late final _$providerUserAtom =
+      Atom(name: '_AppStore.providerUser', context: context);
+
+  @override
+  String get providerUser {
+    _$providerUserAtom.reportRead();
+    return super.providerUser;
+  }
+
+  @override
+  set providerUser(String value) {
+    _$providerUserAtom.reportWrite(value, super.providerUser, () {
+      super.providerUser = value;
+    });
+  }
+
   late final _$tokenAtom = Atom(name: '_AppStore.token', context: context);
 
   @override
@@ -770,6 +786,14 @@ mixin _$AppStore on _AppStore, Store {
         .run(() => super.setUserWalletAmount());
   }
 
+  late final _$setProviderUserAsyncAction =
+      AsyncAction('_AppStore.setProviderUser', context: context);
+
+  @override
+  Future<void> setProviderUser(String val) {
+    return _$setProviderUserAsyncAction.run(() => super.setProviderUser(val));
+  }
+
   late final _$removeSelectedServiceAsyncAction =
       AsyncAction('_AppStore.removeSelectedService', context: context);
 
@@ -1188,6 +1212,7 @@ planTitle: ${planTitle},
 identifier: ${identifier},
 planEndDate: ${planEndDate},
 notificationCount: ${notificationCount},
+providerUser: ${providerUser},
 token: ${token},
 countryId: ${countryId},
 stateId: ${stateId},

@@ -231,36 +231,36 @@ class BasicInfoComponentState extends State<BasicInfoComponent> {
                     launchCall(contactNumber.validate());
                   },
                 ).expand(),
-                24.width
+                // 24.width
               ],
-              AppButton(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(chat, color: Colors.white, height: 18, width: 18),
-                    16.width,
-                    Text(languages.lblChat, style: boldTextStyle(color: Colors.white)),
-                  ],
-                ),
-                width: showContactWidgets ? context.width() : context.width() / 2,
-                elevation: 0,
-                color: primaryColor,
-                onTap: () async {
-                  //ChatScreen(chatUser: ChatUserModel(id: userData.uid!, email: userData.email!, name: userData.firstName!)).launch(context);
-                  toast(languages.pleaseWaitWhileWeLoadChatDetails);
-                  UserData? user = await userService.getUserNull(email: userData.email.validate());
-                  if (user != null) {
-                    Fluttertoast.cancel();
-                    if (widget.bookingDetail != null) {
-                      isChattingAllow = widget.bookingDetail!.status == BookingStatusKeys.complete || widget.bookingDetail!.status == BookingStatusKeys.cancelled;
-                    }
-                    UserChatScreen(receiverUser: user, isChattingAllow: isChattingAllow).launch(context);
-                  } else {
-                    Fluttertoast.cancel();
-                    toast("${userData.firstName} ${languages.isNotAvailableForChat}");
-                  }
-                },
-              ).expand(),
+              // AppButton(
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       Image.asset(chat, color: Colors.white, height: 18, width: 18),
+              //       16.width,
+              //       Text(languages.lblChat, style: boldTextStyle(color: Colors.white)),
+              //     ],
+              //   ),
+              //   width: showContactWidgets ? context.width() : context.width() / 2,
+              //   elevation: 0,
+              //   color: primaryColor,
+              //   onTap: () async {
+              //     //ChatScreen(chatUser: ChatUserModel(id: userData.uid!, email: userData.email!, name: userData.firstName!)).launch(context);
+              //     toast(languages.pleaseWaitWhileWeLoadChatDetails);
+              //     UserData? user = await userService.getUserNull(email: userData.email.validate());
+              //     if (user != null) {
+              //       Fluttertoast.cancel();
+              //       if (widget.bookingDetail != null) {
+              //         isChattingAllow = widget.bookingDetail!.status == BookingStatusKeys.complete || widget.bookingDetail!.status == BookingStatusKeys.cancelled;
+              //       }
+              //       UserChatScreen(receiverUser: user, isChattingAllow: isChattingAllow).launch(context);
+              //     } else {
+              //       Fluttertoast.cancel();
+              //       toast("${userData.firstName} ${languages.isNotAvailableForChat}");
+              //     }
+              //   },
+              // ).expand(),
             ],
           ),
         ],

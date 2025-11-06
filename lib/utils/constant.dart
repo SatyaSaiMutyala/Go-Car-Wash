@@ -165,6 +165,7 @@ const USER_TYPE_PROVIDER = 'provider';
 const USER_TYPE_HANDYMAN = 'handyman';
 const IS_USER = 'user';
 const USER_STATUS_CODE = 1;
+const PROVIDER_USER = 'provider_users';
 //endregion
 
 // region Package Type

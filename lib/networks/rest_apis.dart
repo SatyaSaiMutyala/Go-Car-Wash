@@ -219,7 +219,7 @@ Future<void> saveUserData(UserData data) async {
     await appStore.setStateId(data.stateId.validate());
     await appStore.setDesignation(data.designation.validate());
     await appStore.setAddress(data.address.validate().isNotEmpty ? data.address.validate() : '');
-
+    await appStore.setProviderUser(data.providerUser.validate());
     await appStore.setCityId(data.cityId.validate());
     await appStore.setProviderId(data.providerId.validate());
 

@@ -24,6 +24,7 @@ class UserData {
   int? isFeatured;
   String? displayName;
   String? timeZone;
+  String? providerType;
   String? lastNotificationSeen;
   String? createdAt;
   String? updatedAt;
@@ -41,7 +42,7 @@ class UserData {
   String? password;
   String? cityName;
   num? providerServiceRating;
-  String? providerType;
+  String? providerUser;
   bool? isHandymanAvailable;
   String? loginType;
   int? handymanCommissionId;
@@ -130,6 +131,7 @@ class UserData {
     this.isFeatured,
     this.displayName,
     this.timeZone,
+    this.providerUser,
     this.lastNotificationSeen,
     this.createdAt,
     this.updatedAt,
@@ -186,6 +188,7 @@ class UserData {
     isFeatured = json['is_featured'];
     displayName = json['display_name'];
     timeZone = json['time_zone'];
+    providerUser = json['provider_users'];
     lastNotificationSeen = json['last_notification_seen'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
@@ -242,6 +245,7 @@ class UserData {
     if (this.isFeatured != null) data['is_featured'] = this.isFeatured;
     if (this.displayName != null) data['display_name'] = this.displayName;
     if (this.timeZone != null) data['time_zone'] = this.timeZone;
+    if (this.providerUser != null) data['provider_users'] = this.providerUser;
     if (this.lastNotificationSeen != null) data['last_notification_seen'] = this.lastNotificationSeen;
     if (this.createdAt != null) data['created_at'] = this.createdAt;
     if (this.updatedAt != null) data['updated_at'] = this.updatedAt;

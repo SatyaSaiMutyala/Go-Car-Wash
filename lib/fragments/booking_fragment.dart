@@ -126,81 +126,108 @@ class BookingFragmentState extends State<BookingFragment>
 
   @override
   Widget build(BuildContext context) {
+    bool isDailyWashProvider = appStore.providerUser == 'daily';
+
     return DefaultTabController(
-      length: 2, // two tabs
+      length: isDailyWashProvider ? 1 : 2,
       child: Column(
         children: [
-          /// TabBar right below the parent AppBar
-          Container(
-            color: context.scaffoldBackgroundColor,
-            child: TabBar(
-              labelColor: primaryColor,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: primaryColor,
-              tabs: [
-                Tab(text: "Instant Booking"),
-                Tab(text: "Daily Booking"),
-              ],
+          if (!isDailyWashProvider)
+            Container(
+              color: context.scaffoldBackgroundColor,
+              child: TabBar(
+                labelColor: primaryColor,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: primaryColor,
+                tabs: [
+                  Tab(text: "Instant Booking"),
+                  Tab(text: "Daily Booking"),
+                ],
+              ),
             ),
-          ),
 
           /// TabBarView for tab content
           Expanded(
             child: Stack(
               children: [
-                TabBarView(
-                  children: [
-                    /// Instant Booking Tab
-                    SnapHelperWidget<List<BookingData>>(
-                      initialData: cachedBookingList,
-                      future: future,
-                      loadingWidget: BookingShimmer(),
-                      onSuccess: (list) {
-                        var instantBookings =
-                            list.where((b) => b.bookingsType == "instance").toList();
-                        return buildBookingListView(instantBookings);
-                      },
-                      errorBuilder: (error) {
-                        return NoDataWidget(
-                          title: error,
-                          retryText: languages.reload,
-                          imageWidget: ErrorStateWidget(),
-                          onRetry: () {
-                            page = 1;
-                            appStore.setLoading(true);
-                            init();
-                            setState(() {});
-                          },
-                        );
-                      },
-                    ),
+                if (isDailyWashProvider)
+                  SnapHelperWidget<List<BookingData>>(
+                    initialData: cachedBookingList,
+                    future: future,
+                    loadingWidget: BookingShimmer(),
+                    onSuccess: (list) {
+                      var dailyBookings =
+                          list.where((b) => b.bookingsType == "daily").toList();
+                      return buildBookingListView(dailyBookings);
+                    },
+                    errorBuilder: (error) {
+                      return NoDataWidget(
+                        title: error,
+                        retryText: languages.reload,
+                        imageWidget: ErrorStateWidget(),
+                        onRetry: () {
+                          page = 1;
+                          appStore.setLoading(true);
+                          init();
+                          setState(() {});
+                        },
+                      );
+                    },
+                  )
+                else
+                  TabBarView(
+                    children: [
+                      SnapHelperWidget<List<BookingData>>(
+                        initialData: cachedBookingList,
+                        future: future,
+                        loadingWidget: BookingShimmer(),
+                        onSuccess: (list) {
+                          var instantBookings = list
+                              .where((b) => b.bookingsType == "instant")
+                              .toList();
+                          return buildBookingListView(instantBookings);
+                        },
+                        errorBuilder: (error) {
+                          return NoDataWidget(
+                            title: error,
+                            retryText: languages.reload,
+                            imageWidget: ErrorStateWidget(),
+                            onRetry: () {
+                              page = 1;
+                              appStore.setLoading(true);
+                              init();
+                              setState(() {});
+                            },
+                          );
+                        },
+                      ),
 
-                    /// Daily Booking Tab
-                    SnapHelperWidget<List<BookingData>>(
-                      initialData: cachedBookingList,
-                      future: future,
-                      loadingWidget: BookingShimmer(),
-                      onSuccess: (list) {
-                        var dailyBookings =
-                            list.where((b) => b.bookingsType == "daily").toList();
-                        return buildBookingListView(dailyBookings);
-                      },
-                      errorBuilder: (error) {
-                        return NoDataWidget(
-                          title: error,
-                          retryText: languages.reload,
-                          imageWidget: ErrorStateWidget(),
-                          onRetry: () {
-                            page = 1;
-                            appStore.setLoading(true);
-                            init();
-                            setState(() {});
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                      SnapHelperWidget<List<BookingData>>(
+                        initialData: cachedBookingList,
+                        future: future,
+                        loadingWidget: BookingShimmer(),
+                        onSuccess: (list) {
+                          var dailyBookings = list
+                              .where((b) => b.bookingsType == "daily")
+                              .toList();
+                          return buildBookingListView(dailyBookings);
+                        },
+                        errorBuilder: (error) {
+                          return NoDataWidget(
+                            title: error,
+                            retryText: languages.reload,
+                            imageWidget: ErrorStateWidget(),
+                            onRetry: () {
+                              page = 1;
+                              appStore.setLoading(true);
+                              init();
+                              setState(() {});
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 Observer(
                     builder: (_) => LoaderWidget().visible(appStore.isLoading)),
               ],
@@ -211,7 +238,6 @@ class BookingFragmentState extends State<BookingFragment>
     );
   }
 
-  /// Reusable Booking List Builder
   Widget buildBookingListView(List<BookingData> list) {
     return AnimatedScrollView(
       controller: scrollController,

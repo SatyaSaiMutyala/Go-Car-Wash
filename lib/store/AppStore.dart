@@ -55,10 +55,12 @@ abstract class _AppStore with Store {
   String userProfileImage = getStringAsync(PROFILE_IMAGE);
 
   @observable
-  bool isCategoryWisePackageService = getBoolAsync(CATEGORY_BASED_SELECT_PACKAGE_SERVICE);
+  bool isCategoryWisePackageService =
+      getBoolAsync(CATEGORY_BASED_SELECT_PACKAGE_SERVICE);
 
   @observable
-  String selectedLanguageCode = getStringAsync(SELECTED_LANGUAGE_CODE, defaultValue: DEFAULT_LANGUAGE);
+  String selectedLanguageCode =
+      getStringAsync(SELECTED_LANGUAGE_CODE, defaultValue: DEFAULT_LANGUAGE);
 
   @observable
   String uid = getStringAsync(UID);
@@ -77,6 +79,9 @@ abstract class _AppStore with Store {
 
   @observable
   num notificationCount = -1;
+
+  @observable
+  String providerUser = getStringAsync(PROVIDER_USER);
 
   @observable
   String token = getStringAsync(TOKEN);
@@ -118,7 +123,8 @@ abstract class _AppStore with Store {
   String createdAt = getStringAsync(CREATED_AT);
 
   @observable
-  String earningType = getStringAsync(EARNING_TYPE, defaultValue: EARNING_TYPE_COMMISSION);
+  String earningType =
+      getStringAsync(EARNING_TYPE, defaultValue: EARNING_TYPE_COMMISSION);
 
   @computed
   bool get earningTypeCommission => earningType == EARNING_TYPE_COMMISSION;
@@ -151,10 +157,12 @@ abstract class _AppStore with Store {
   LanguageDataModel selectedLanguage = languageList().first;
 
   @observable
-  bool isHelpDeskFirstTime = getBoolAsync(IS_HELP_DESK_FIRST_TIME, defaultValue: true);
+  bool isHelpDeskFirstTime =
+      getBoolAsync(IS_HELP_DESK_FIRST_TIME, defaultValue: true);
 
   @observable
-  String activeRevenueCatIdentifier = getStringAsync(ACTIVE_IN_APP_PURCHASE_IDENTIFIER);
+  String activeRevenueCatIdentifier =
+      getStringAsync(ACTIVE_IN_APP_PURCHASE_IDENTIFIER);
 
   @observable
   ProviderSubscriptionModel? providerCurrentSubscription;
@@ -164,11 +172,11 @@ abstract class _AppStore with Store {
     selectedLanguage = val;
   }
 
-
- @action
+  @action
   void setExpansionDynamicHeight(double val) {
     expansionDynamicHeight = val;
   }
+
   @action
   Future<void> setIsHelpDeskFirstTime(bool val) async {
     isHelpDeskFirstTime = val;
@@ -185,6 +193,12 @@ abstract class _AppStore with Store {
   }
 
   @action
+  Future<void> setProviderUser(String val) async {
+    providerUser = val;
+    await setValue(PROVIDER_USER, val);
+  }
+
+  @action
   void setTotalHandyman(int val) {
     totalHandyman = val;
   }
@@ -195,7 +209,8 @@ abstract class _AppStore with Store {
   }
 
   @action
-  Future<void> removeSelectedService(ServiceData val, {int selectedIndex = -1}) async {
+  Future<void> removeSelectedService(ServiceData val,
+      {int selectedIndex = -1}) async {
     if (selectedIndex == val.id) {
       selectedServiceData = ServiceData();
     }
@@ -227,14 +242,16 @@ abstract class _AppStore with Store {
 
   @action
   Future<void> removeSelectedPackageService(ServiceData val) async {
-    selectedServiceList.remove(selectedServiceList.firstWhere((element) => element.id == val.id));
+    selectedServiceList.remove(
+        selectedServiceList.firstWhere((element) => element.id == val.id));
     log('After remove Selected Service length: ${selectedServiceList.length}');
   }
 
   @action
   Future<void> setCategoryBasedPackageService(bool val) async {
     isCategoryWisePackageService = val;
-    await setValue(CATEGORY_BASED_SELECT_PACKAGE_SERVICE, isCategoryWisePackageService);
+    await setValue(
+        CATEGORY_BASED_SELECT_PACKAGE_SERVICE, isCategoryWisePackageService);
   }
 
   @action
@@ -471,8 +488,10 @@ abstract class _AppStore with Store {
     activeRevenueCatIdentifier = val;
     await setValue(ACTIVE_IN_APP_PURCHASE_IDENTIFIER, val);
   }
+
   @action
-  Future<void> setProviderCurrentSubscriptionPlan(ProviderSubscriptionModel val) async {
+  Future<void> setProviderCurrentSubscriptionPlan(
+      ProviderSubscriptionModel val) async {
     providerCurrentSubscription = val;
     await setValue(ACTIVE_SUBSCRIPTION_PLAN, val.toJson());
   }

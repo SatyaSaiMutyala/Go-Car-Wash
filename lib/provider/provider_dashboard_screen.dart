@@ -42,7 +42,7 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
     BookingFragment(),
     // BookingScreen(),
     // if (appConfigurationStore.isEnableChat) ChatListScreen(),
-    ServiceListScreen(showBackIcon: false),
+    if(appStore.providerUser != 'daily') ServiceListScreen(showBackIcon: false),
     ProviderProfileFragment(),
   ];
 
@@ -95,14 +95,14 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
     return DoublePressBackWidget(
       message: languages.lblCloseAppMsg,
       child: Scaffold(
-        appBar: currentIndex == 2
+        appBar: currentIndex == 2 && appStore.providerUser != 'daily'
             ? null
             : appBarWidget(
                 [
                   languages.providerHome,
                   languages.lblBooking,
                   if (appConfigurationStore.isEnableChat) languages.lblChat,
-                  '',
+                  if(appStore.providerUser != 'daily') '',
                   languages.lblProfile,
                 ][currentIndex],
                 color: primaryColor,
@@ -217,6 +217,7 @@ class ProviderDashboardScreenState extends State<ProviderDashboardScreen> {
                       fill_ticket.iconImage(color: context.primaryColor),
                   label: languages.lblBooking,
                 ),
+                if(appStore.providerUser != 'daily')
                 NavigationDestination(
                   icon: chat.iconImage(color: appTextSecondaryColor),
                   selectedIcon: chat.iconImage(color: context.primaryColor),

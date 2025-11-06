@@ -100,26 +100,26 @@ class ServiceComponent extends StatelessWidget {
                     right: 12,
                     child: Icon(Icons.circle, color: Colors.green, size: 12),
                   ),
-                // Positioned(
-                //   bottom: 12,
-                //   right: 8,
-                //   child: Container(
-                //     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                //     decoration: boxDecorationWithShadow(
-                //       backgroundColor: primaryColor,
-                //       borderRadius: radius(24),
-                //       border: Border.all(color: context.cardColor, width: 2),
-                //     ),
-                //     child: PriceWidget(
-                //       price: data.price.validate(),
-                //       isHourlyService: data.type.validate() == SERVICE_TYPE_HOURLY,
-                //       color: Colors.white,
-                //       hourlyTextColor: Colors.white,
-                //       size: 14,
-                //       isFreeService: data.isFreeService,
-                //     ),
-                //   ),
-                // ),
+                Positioned(
+                  bottom: 12,
+                  right: 8,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: boxDecorationWithShadow(
+                      backgroundColor: primaryColor,
+                      borderRadius: radius(24),
+                      border: Border.all(color: context.cardColor, width: 2),
+                    ),
+                    child: PriceWidget(
+                      price: data.price.validate(),
+                      isHourlyService: data.type.validate() == SERVICE_TYPE_HOURLY,
+                      color: Colors.white,
+                      hourlyTextColor: Colors.white,
+                      size: 14,
+                      isFreeService: data.isFreeService,
+                    ),
+                  ),
+                ),
                 Positioned(
                   bottom: 0,
                   left: 16,

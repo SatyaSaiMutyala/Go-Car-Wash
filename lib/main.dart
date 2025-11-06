@@ -126,7 +126,6 @@ void main() async {
 
   appStore.setLanguage(
       getStringAsync(SELECTED_LANGUAGE_CODE, defaultValue: DEFAULT_LANGUAGE));
-
   runApp(MyApp());
 }
 
@@ -145,9 +144,8 @@ class _MyAppState extends State<MyApp> {
   void init() async {
     afterBuildCreated(() {
       int val = getIntAsync(THEME_MODE_INDEX, defaultValue: THEME_MODE_SYSTEM);
-
       if (val == THEME_MODE_LIGHT) {
-        appStore.setDarkMode(false);
+        appStore.setDarkMode(true);
       } else if (val == THEME_MODE_DARK) {
         appStore.setDarkMode(true);
       }

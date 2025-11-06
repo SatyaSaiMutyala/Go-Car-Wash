@@ -196,24 +196,24 @@ class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderCompon
                         child: Text('${widget.serviceDetail.name.validate()}', style: boldTextStyle(size: 18)),
                         directionMarguee: DirectionMarguee.oneDirection,
                       ),
-                      // 8.height,
-                      // Row(
-                      //   children: [
-                      //     PriceWidget(
-                      //       price: widget.serviceDetail.price.validate(),
-                      //       isHourlyService: widget.serviceDetail.isHourlyService,
-                      //       size: 16,
-                      //       hourlyTextColor: textSecondaryColorGlobal,
-                      //       isFreeService: widget.serviceDetail.isFreeService,
-                      //     ),
-                      //     4.width,
-                      //     if (widget.serviceDetail.discount.validate() != 0)
-                      //       Text(
-                      //         '(${widget.serviceDetail.discount.validate()}% ${languages.lblOff})',
-                      //         style: boldTextStyle(color: Colors.green),
-                      //       ),
-                      //   ],
-                      // ),
+                      8.height,
+                      Row(
+                        children: [
+                          PriceWidget(
+                            price: widget.serviceDetail.price.validate(),
+                            isHourlyService: widget.serviceDetail.isHourlyService,
+                            size: 16,
+                            hourlyTextColor: textSecondaryColorGlobal,
+                            isFreeService: widget.serviceDetail.isFreeService,
+                          ),
+                          4.width,
+                          if (widget.serviceDetail.discount.validate() != 0)
+                            Text(
+                              '(${widget.serviceDetail.discount.validate()}% ${languages.lblOff})',
+                              style: boldTextStyle(color: Colors.green),
+                            ),
+                        ],
+                      ),
                       4.height,
                       TextIcon(
                         edgeInsets: EdgeInsets.symmetric(horizontal: 0, vertical: 8),

@@ -43,6 +43,7 @@ class UserKeys {
   static String whyChooseReason = 'reason';
   static String whyChooseTitle = 'title';
   static String isDefault = 'is_default';
+  static String provideType = 'provider_users';
 }
 
 class BookingServiceKeys {
@@ -119,6 +120,10 @@ class AddServiceKey {
   static String visitType = 'visit_type';
   static String translations = 'translations';
   static String isServiceRequest = 'is_service_request';
+  static String washType = 'wash_type';
+  static String latitude = 'latitude';
+  static String longitude = 'longitude';
+  static String location = 'location';
 }
 
 class AddAddressKey {

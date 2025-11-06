@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:handyman_provider_flutter/components/app_widgets.dart';
 import 'package:handyman_provider_flutter/components/back_widget.dart';
 import 'package:handyman_provider_flutter/components/custom_image_picker.dart';
@@ -15,6 +17,7 @@ import 'package:handyman_provider_flutter/models/visit_type_model.dart';
 import 'package:handyman_provider_flutter/networks/rest_apis.dart';
 import 'package:handyman_provider_flutter/provider/services/components/category_sub_cat_drop_down.dart';
 import 'package:handyman_provider_flutter/provider/services/components/service_address_component.dart';
+import 'package:handyman_provider_flutter/provider/services/map_screen.dart';
 import 'package:handyman_provider_flutter/provider/timeSlots/my_time_slots_screen.dart';
 import 'package:handyman_provider_flutter/utils/common.dart';
 import 'package:handyman_provider_flutter/utils/configs.dart';
@@ -38,6 +41,8 @@ class _AddServicesState extends State<AddServices> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   UniqueKey uniqueKey = UniqueKey();
   UniqueKey formWidgetKey = UniqueKey();
+  double? lat;
+  double? long;
 
   /// TextEditingController
   TextEditingController serviceNameCont = TextEditingController();
@@ -49,6 +54,7 @@ class _AddServicesState extends State<AddServices> {
   TextEditingController prePayAmountController = TextEditingController();
   TextEditingController hoursCont = TextEditingController();
   TextEditingController miutesCont = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
 
   /// FocusNode
   FocusNode serviceNameFocus = FocusNode();
@@ -209,12 +215,16 @@ class _AddServicesState extends State<AddServices> {
       AddServiceKey.isFeatured: isFeature ? '1' : '0',
       AddServiceKey.isSlot: isTimeSlotAvailable ? '1' : '0',
       AddServiceKey.status: serviceStatus.validate() == ACTIVE ? '1' : '0',
-      // AddServiceKey.duration: "${currentTime!.hour}:${currentTime!.minute}",
+      AddServiceKey.duration: "${currentTime!.hour}:${currentTime!.minute}",
       AddServiceKey.visitType: selectedVisitType!.key,
       AddServiceKey.isServiceRequest: '1',
       AdvancePaymentKey.isEnableAdvancePayment: isAdvancePayment ? 1 : 0,
+      AddServiceKey.washType : 'instant',
+      AddServiceKey.latitude : lat,
+      AddServiceKey.longitude : long,
+      AddServiceKey.location : locationController.text
     };
-    print('im out here -------');
+    print('im out here ------- ${lat} ------> ${long} ------> ${locationController}');
 
     if (subCategoryId != -1) {
       req.putIfAbsent(AddServiceKey.subCategoryId, () => subCategoryId);
@@ -449,115 +459,213 @@ class _AddServicesState extends State<AddServices> {
                 ).expand(),
               ],
             ),
-            // Row(
-            //   children: [
-            //     AppTextField(
-            //       textFieldType: TextFieldType.PHONE,
-            //       controller: priceCont,
-            //       focus: priceFocus,
-            //       nextFocus: discountFocus,
-            //       enabled: serviceType != SERVICE_TYPE_FREE,
-            //       errorThisFieldRequired: languages.hintRequired,
-            //       keyboardType: TextInputType.numberWithOptions(decimal: true),
-            //       decoration: inputDecoration(
-            //         context,
-            //         hint: languages.hintPrice,
-            //         fillColor: context.scaffoldBackgroundColor,
-            //       ),
-            //       validator: (s) {
-            //         if (s!.isEmpty) return errorThisFieldRequired;
 
-            //         if (s.toDouble() <= 0 && serviceType != SERVICE_TYPE_FREE)
-            //           return languages.priceAmountValidationMessage;
-            //         return null;
-            //       },
-            //     ).expand(),
-            //     16.width,
-            //     AppTextField(
-            //       textFieldType: TextFieldType.PHONE,
-            //       controller: discountCont,
-            //       focus: discountFocus,
-            //       nextFocus: durationHrFocus,
-            //       enabled: serviceType != SERVICE_TYPE_FREE,
-            //       decoration: inputDecoration(
-            //         context,
-            //         hint: languages.hintDiscount
-            //             .capitalizeFirstLetter()
-            //             .suffixText(value: ' (%)'),
-            //         fillColor: context.scaffoldBackgroundColor,
-            //       ),
-            //       isValidationRequired: serviceType != SERVICE_TYPE_FREE,
-            //       validator: (s) {
-            //         int discount = int.tryParse(s.validate()).validate();
-            //         if ((discount < 0 || discount >= 100))
-            //           return languages.valueConditionMessage;
-            //         else
-            //           return null;
-            //       },
-            //       keyboardType: TextInputType.numberWithOptions(decimal: true),
-            //     ).expand(),
-            //   ],
-            // ),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: AppTextField(
-            //         textFieldType: TextFieldType.PHONE,
-            //         controller: durationContHr,
-            //         focus: durationHrFocus,
-            //         nextFocus: durationMinFocus,
-            //         maxLength: 3,
-            //         inputFormatters: <TextInputFormatter>[
-            //           FilteringTextInputFormatter.digitsOnly
-            //         ],
-            //         onChanged: (value) {
-            //           currentTime = TimeOfDay(
-            //               hour: int.parse(value),
-            //               minute: int.parse(durationContMin.text.isEmpty
-            //                   ? "0"
-            //                   : durationContMin.text.toString()));
-            //         },
-            //         errorThisFieldRequired: languages.hintRequired,
-            //         decoration: inputDecoration(
-            //           context,
-            //           hint: languages.lblDurationHr,
-            //           fillColor: context.scaffoldBackgroundColor,
-            //           counterText: '',
-            //         ),
-            //       ),
-            //     ),
-            //     10.width,
-            //     Expanded(
-            //       child: AppTextField(
-            //         textFieldType: TextFieldType.PHONE,
-            //         controller: durationContMin,
-            //         focus: durationMinFocus,
-            //         nextFocus: descriptionFocus,
-            //         inputFormatters: <TextInputFormatter>[
-            //           FilteringTextInputFormatter.digitsOnly
-            //         ],
-            //         maxLength: 2,
-            //         onChanged: (value) {
-            //           currentTime = TimeOfDay(
-            //               hour: int.parse(durationContHr.text.isEmpty
-            //                   ? "0"
-            //                   : durationContHr.text.toString()),
-            //               minute: int.parse(value));
-            //         },
-            //         isValidationRequired:
-            //             appStore.selectedLanguage.languageCode ==
-            //                 DEFAULT_LANGUAGE,
-            //         errorThisFieldRequired: languages.hintRequired,
-            //         decoration: inputDecoration(
-            //           context,
-            //           hint: languages.lblDurationMin,
-            //           fillColor: context.scaffoldBackgroundColor,
-            //           counterText: '',
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
+
+             Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppTextField(
+                  controller: locationController,
+                  textFieldType: TextFieldType.NAME,
+                  readOnly: true,
+                  decoration: inputDecoration(context,
+                      fillColor: context.scaffoldBackgroundColor,
+                      hint: "Address"),
+                  validator: (val) =>
+                      val!.isEmpty ? languages.hintRequired : null,
+                ),
+                8.height,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton.icon(
+                      icon: const Icon(Icons.my_location, color: primaryColor),
+                      label: const Text("Current Location",
+                          style: TextStyle(color: primaryColor)),
+                      onPressed: () async {
+                        bool serviceEnabled =
+                            await Geolocator.isLocationServiceEnabled();
+                        if (!serviceEnabled) {
+                          await Geolocator.openLocationSettings();
+                          return;
+                        }
+                        LocationPermission permission =
+                            await Geolocator.checkPermission();
+                        if (permission == LocationPermission.denied ||
+                            permission == LocationPermission.deniedForever) {
+                          permission = await Geolocator.requestPermission();
+                        }
+                        if (permission == LocationPermission.denied ||
+                            permission == LocationPermission.deniedForever) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text("Location permission is required")));
+                          return;
+                        }
+
+                        Position position = await Geolocator.getCurrentPosition(
+                            desiredAccuracy: LocationAccuracy.high);
+
+                        List<Placemark> placemarks =
+                            await placemarkFromCoordinates(
+                                position.latitude, position.longitude);
+                        if (placemarks.isNotEmpty) {
+                          Placemark p = placemarks.first;
+                          String address =
+                              "${p.name}, ${p.locality}, ${p.administrativeArea}, ${p.country}";
+                          locationController.text = address;
+                          print(
+                              "Lat: ${position.latitude}, Lng: ${position.longitude}");
+                          double latitude = position.latitude;
+                          double longitude = position.longitude;
+                          setState(() {
+                            lat = latitude;
+                            long = longitude;
+                          });
+                        }
+                      },
+                    ),
+                    TextButton.icon(
+                      icon: const Icon(Icons.map, color: primaryColor),
+                      label: const Text("Choose from Maps",
+                          style: TextStyle(color: primaryColor)),
+                      onPressed: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const MapScreen()),
+                        );
+                        if (result != null) {
+                          locationController.text = result["address"];
+                          print(
+                              "Lat: ${result["latitude"]}, Lng: ${result["longitude"]}");
+                          double latitude = result["latitude"];
+                          double longitude = result["longitude"];
+                          setState(() {
+                            lat = latitude;
+                            long = longitude;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+
+
+
+
+            Row(
+              children: [
+                AppTextField(
+                  textFieldType: TextFieldType.PHONE,
+                  controller: priceCont,
+                  focus: priceFocus,
+                  nextFocus: discountFocus,
+                  enabled: serviceType != SERVICE_TYPE_FREE,
+                  errorThisFieldRequired: languages.hintRequired,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  decoration: inputDecoration(
+                    context,
+                    hint: languages.hintPrice,
+                    fillColor: context.scaffoldBackgroundColor,
+                  ),
+                  validator: (s) {
+                    if (s!.isEmpty) return errorThisFieldRequired;
+
+                    if (s.toDouble() <= 0 && serviceType != SERVICE_TYPE_FREE)
+                      return languages.priceAmountValidationMessage;
+                    return null;
+                  },
+                ).expand(),
+                16.width,
+                AppTextField(
+                  textFieldType: TextFieldType.PHONE,
+                  controller: discountCont,
+                  focus: discountFocus,
+                  nextFocus: durationHrFocus,
+                  enabled: serviceType != SERVICE_TYPE_FREE,
+                  decoration: inputDecoration(
+                    context,
+                    hint: languages.hintDiscount
+                        .capitalizeFirstLetter()
+                        .suffixText(value: ' (%)'),
+                    fillColor: context.scaffoldBackgroundColor,
+                  ),
+                  isValidationRequired: serviceType != SERVICE_TYPE_FREE,
+                  validator: (s) {
+                    int discount = int.tryParse(s.validate()).validate();
+                    if ((discount < 0 || discount >= 100))
+                      return languages.valueConditionMessage;
+                    else
+                      return null;
+                  },
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                ).expand(),
+              ],
+            ),
+
+            Row(
+              children: [
+                Expanded(
+                  child: AppTextField(
+                    textFieldType: TextFieldType.NUMBER,
+                    controller: durationContHr,
+                    focus: durationHrFocus,
+                    nextFocus: durationMinFocus,
+                    maxLength: 3,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    onChanged: (value) {
+                      currentTime = TimeOfDay(
+                          hour: int.parse(value),
+                          minute: int.parse(durationContMin.text.isEmpty
+                              ? "0"
+                              : durationContMin.text.toString()));
+                    },
+                    errorThisFieldRequired: languages.hintRequired,
+                    decoration: inputDecoration(
+                      context,
+                      hint: languages.lblDurationHr,
+                      fillColor: context.scaffoldBackgroundColor,
+                      counterText: '',
+                    ),
+                  ),
+                ),
+                10.width,
+                Expanded(
+                  child: AppTextField(
+                    textFieldType: TextFieldType.NUMBER,
+                    controller: durationContMin,
+                    focus: durationMinFocus,
+                    nextFocus: descriptionFocus,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    maxLength: 2,
+                    onChanged: (value) {
+                      currentTime = TimeOfDay(
+                          hour: int.parse(durationContHr.text.isEmpty
+                              ? "0"
+                              : durationContHr.text.toString()),
+                          minute: int.parse(value));
+                    },
+                    isValidationRequired:
+                        appStore.selectedLanguage.languageCode ==
+                            DEFAULT_LANGUAGE,
+                    errorThisFieldRequired: languages.hintRequired,
+                    decoration: inputDecoration(
+                      context,
+                      hint: languages.lblDurationMin,
+                      fillColor: context.scaffoldBackgroundColor,
+                      counterText: '',
+                    ),
+                  ),
+                ),
+              ],
+            ),
             // AppTextField(
             //   textFieldType: TextFieldType.MULTILINE,
             //   minLines: 5,
@@ -690,72 +798,72 @@ class _AddServicesState extends State<AddServices> {
                 ),
               ),
             ),
-            if (appConfigurationStore.slotServiceStatus)
-              Container(
-                decoration: boxDecorationDefault(
-                    color: context.scaffoldBackgroundColor,
-                    borderRadius: radius()),
-                child: SettingItemWidget(
-                  title: languages.timeSlotAvailable,
-                  subTitle: languages.doesThisServicesContainsTimeslot,
-                  trailing: Observer(builder: (context) {
-                    return Transform.scale(
-                      scale: 0.8,
-                      child: CupertinoSwitch(
-                        activeColor: primaryColor,
-                        value: isTimeSlotAvailable,
-                        onChanged: (v) async {
-                          if (!v) {
-                            isTimeSlotAvailable = v;
-                            setState(() {});
-                            return;
-                          }
-                          if (timeSlotStore.isTimeSlotAvailable) {
-                            isTimeSlotAvailable = v;
-                            setState(() {});
-                          } else {
-                            toast(
-                                languages.pleaseEnterTheDefaultTimeslotsFirst);
-                            MyTimeSlotsScreen(isFromService: true)
-                                .launch(context)
-                                .then((value) {
-                              if (value != null) {
-                                if (value) {
-                                  isTimeSlotAvailable = v;
-                                  setState(() {});
-                                }
-                              }
-                            });
-                          }
-                        },
-                      ).visible(!timeSlotStore.isLoading,
-                          defaultWidget: LoaderWidget(size: 26)),
-                    );
-                  }),
-                ),
-              ),
-            if (isAdvancePaymentAllowedBySystem &&
-                serviceType == SERVICE_TYPE_FIXED)
-              Container(
-                decoration: boxDecorationDefault(
-                    color: context.scaffoldBackgroundColor,
-                    borderRadius: radius()),
-                child: SettingItemWidget(
-                  title: languages.enablePrePayment,
-                  subTitle: languages.enablePrePaymentMessage,
-                  trailing: Transform.scale(
-                    scale: 0.8,
-                    child: CupertinoSwitch(
-                      activeColor: primaryColor,
-                      value: isAdvancePayment,
-                      onChanged: (v) async {
-                        isAdvancePayment = !isAdvancePayment;
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                ),
-              ),
+            // if (appConfigurationStore.slotServiceStatus)
+            //   Container(
+            //     decoration: boxDecorationDefault(
+            //         color: context.scaffoldBackgroundColor,
+            //         borderRadius: radius()),
+            //     child: SettingItemWidget(
+            //       title: languages.timeSlotAvailable,
+            //       subTitle: languages.doesThisServicesContainsTimeslot,
+            //       trailing: Observer(builder: (context) {
+            //         return Transform.scale(
+            //           scale: 0.8,
+            //           child: CupertinoSwitch(
+            //             activeColor: primaryColor,
+            //             value: isTimeSlotAvailable,
+            //             onChanged: (v) async {
+            //               if (!v) {
+            //                 isTimeSlotAvailable = v;
+            //                 setState(() {});
+            //                 return;
+            //               }
+            //               if (timeSlotStore.isTimeSlotAvailable) {
+            //                 isTimeSlotAvailable = v;
+            //                 setState(() {});
+            //               } else {
+            //                 toast(
+            //                     languages.pleaseEnterTheDefaultTimeslotsFirst);
+            //                 MyTimeSlotsScreen(isFromService: true)
+            //                     .launch(context)
+            //                     .then((value) {
+            //                   if (value != null) {
+            //                     if (value) {
+            //                       isTimeSlotAvailable = v;
+            //                       setState(() {});
+            //                     }
+            //                   }
+            //                 });
+            //               }
+            //             },
+            //           ).visible(!timeSlotStore.isLoading,
+            //               defaultWidget: LoaderWidget(size: 26)),
+            //         );
+            //       }),
+            //     ),
+            //   ),
+            // if (isAdvancePaymentAllowedBySystem &&
+            //     serviceType == SERVICE_TYPE_FIXED)
+            //   Container(
+            //     decoration: boxDecorationDefault(
+            //         color: context.scaffoldBackgroundColor,
+            //         borderRadius: radius()),
+            //     child: SettingItemWidget(
+            //       title: languages.enablePrePayment,
+            //       subTitle: languages.enablePrePaymentMessage,
+            //       trailing: Transform.scale(
+            //         scale: 0.8,
+            //         child: CupertinoSwitch(
+            //           activeColor: primaryColor,
+            //           value: isAdvancePayment,
+            //           onChanged: (v) async {
+            //             isAdvancePayment = !isAdvancePayment;
+            //             setState(() {});
+            //           },
+            //         ),
+            //       ),
+            //     ),
+            //   ),
             if (isAdvancePaymentAllowedBySystem && isAdvancePayment)
               AppTextField(
                 textFieldType: TextFieldType.PHONE,

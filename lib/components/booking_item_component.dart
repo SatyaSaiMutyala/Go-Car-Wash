@@ -149,23 +149,21 @@ Widget build(BuildContext context) {
         ),
 
         16.height,
-
         /// 4th row onwards: Details
         buildDetailRow(languages.lblAddress, widget.bookingData.address),
         buildDetailRow("${languages.lblDate} & ${languages.lblTime}",
             "${formatDate(widget.bookingData.date.validate(), format: DATE_FORMAT_2)} ${languages.at} ${buildTimeWidget(bookingDetail: widget.bookingData)}"),
         buildDetailRow(languages.customer, widget.bookingData.customerName),
         buildDetailRow("Customer Mobile", widget.bookingData.customerPhone.validate()),
-        buildDetailRow("Plan", widget.bookingData.type.validate()),
-        buildDetailRow("Wash Type", widget.bookingData.type.validate()), // replace with correct field
-        buildDetailRow("Location Type", widget.bookingData.bookingAddressId.toString()), // adjust
-        buildDetailRow("Addons", "widget.bookingData.subTotal.toString()"), // adjust
-        // buildDetailRow("Preferences", widget.bookingData.description.validate()), // adjust
+        if(widget.bookingData.bookingsType != 'instant')
+        buildDetailRow("Plan", widget.bookingData.plan != null ? widget.bookingData.plan!.amount.validate() : 'No Plan'),
+        buildDetailRow("Wash Type", '${widget.bookingData.bookingsType.validate()} Wash'), 
+        buildDetailRow("Location Type", widget.bookingData!.bookingAt), // adjust
+        buildDetailRow("Addons", "widget.bookingData.subTotal.toString()"), 
+        buildDetailRow("Preferences", widget.bookingData.description.validate()), // adjust
         buildDetailRow(languages.paymentStatus,
             buildPaymentStatusWithMethod(widget.bookingData.paymentStatus.validate(), widget.bookingData.paymentMethod.validate())),
-
         20.height,
-
         /// Accept & Decline buttons
         if (isUserTypeProvider && widget.bookingData.status == BookingStatusKeys.pending || (isUserTypeHandyman && widget.bookingData.status == BookingStatusKeys.accept))
             Row(
@@ -252,32 +250,39 @@ Widget build(BuildContext context) {
                 ).expand(),
               ],
             ).paddingOnly(bottom: 8, left: 8, right: 8, top: 16),
-          if (isUserTypeProvider && widget.bookingData.status == BookingStatusKeys.accept)
-            Column(
-              children: [
-                8.height,
-                AppButton(
-                  width: context.width(),
-                  child: Text(
-                    widget.bookingData.handyman!.isEmpty ? languages.lblAssign : languages.lblReassign,
-                    style: boldTextStyle(color: white),
-                  ),
-                  color: primaryColor,
-                  elevation: 0,
-                  onTap: () {
-                    AssignHandymanScreen(
-                      bookingId: widget.bookingData.id,
-                      serviceAddressId: widget.bookingData.bookingAddressId,
-                      onUpdate: () {
-                        setState(() {});
-                        LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
-                      },
-                    ).launch(context);
-                  },
-                ),
-              ],
-            ).paddingAll(8),
+          // if (isUserTypeProvider && widget.bookingData.status == BookingStatusKeys.accept)
+          //   Column(
+          //     children: [
+          //       8.height,
+          //       AppButton(
+          //         width: context.width(),
+          //         child: Text(
+          //           widget.bookingData.handyman!.isEmpty ? languages.lblAssign : languages.lblReassign,
+          //           style: boldTextStyle(color: white),
+          //         ),
+          //         color: primaryColor,
+          //         elevation: 0,
+          //         onTap: () {
+          //           AssignHandymanScreen(
+          //             bookingId: widget.bookingData.id,
+          //             serviceAddressId: widget.bookingData.bookingAddressId,
+          //             onUpdate: () {
+          //               setState(() {});
+          //               LiveStream().emit(LIVESTREAM_UPDATE_BOOKINGS);
+          //             },
+          //           ).launch(context);
+          //         },
+          //       ),
+          //     ],
+          //   ).paddingAll(8),
       ],
+    ).onTap(
+      () async {
+        BookingDetailScreen(bookingId: widget.bookingData.id.validate()).launch(context);
+      },
+      hoverColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
     ),
   );
 }
