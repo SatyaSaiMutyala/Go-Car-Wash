@@ -31,17 +31,17 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.gocarclean.provider"
-    compileSdk 35
+    compileSdk 36
     ndkVersion "27.0.12077973"
 
     compileOptions {
         coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
     sourceSets {
@@ -50,7 +50,7 @@ android {
 
     defaultConfig {
         applicationId "com.gocarclean.provider"
-        minSdkVersion 23
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 35
         versionCode 1
         versionName '1.0.0'
